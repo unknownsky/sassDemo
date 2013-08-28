@@ -79,6 +79,8 @@ $prefix-for-spec: true !default; //required for keyframe mixin
 //---------------------------------
 @mixin border-radius($radius:$baseRadius){
 	@include prefixer(border-radius,$radius,webkit spec);
+	//keeps background from busting out of border
+	@include background-clip(padding-box);
 }
 
 //----------------------------------
@@ -180,6 +182,17 @@ $prefix-for-spec: true !default; //required for keyframe mixin
 	@include prefixer(transform,scale($ratio...),webkit moz ms o spec);
 }
 
+//6.7.3 translate
+//eg. @include translate(10px,30px);
+@mixin translate($distance...){
+	@include prefixer(transform,translate($distance...),webkit moz ms o spec);
+}
+
+//6.7.4 skew
+//eg. @include skew(30deg,40deg)
+@mixin skew($degrees...){
+	@include prefixer(transform,skew($degrees...),webkit moz ms o spec);
+}
 
 //6.8 3D transform
 
@@ -230,3 +243,111 @@ $prefix-for-spec: true !default; //required for keyframe mixin
 @mixin scale3d($ratio...){
 	@include prefixer(transform,scale3d($ratio...),webkit moz ms o spec);
 }
+
+//6.8.8 translateX
+//eg. @include translateX(130px);
+@mixin translateX($distance){
+	@include prefixer(transform,translateX($distance),webkit moz ms o spec);
+}
+
+//6.8.9 translateY
+//eg. @include translateY(130px);
+@mixin translateY($distance){
+	@include prefixer(transform,translateY($distance),webkit moz ms o spec);
+}
+
+//6.8.10 translateZ
+//eg. @include translateZ(130px);
+@mixin translateZ($distance){
+	@include prefixer(transform,translateZ($distance),webkit moz ms o spec);
+}
+
+//6.8.11 translate3d
+//eg. @include translate3d(10px,20px,30px);
+@mixin translate3d($distance...){
+	@include prefixer(transform,translate3d($distance...),webkit moz ms o spec);
+}
+
+//6.8.12 skewX
+//eg. 	@include skewX(30deg);
+@mixin skewX($degrees){
+	@include prefixer(transform,skewX($degrees),webkit moz ms o spec);
+}
+
+//6.8.13 skewY
+//eg.	@include skewY(30deg);
+@mixin skewY($degrees){
+	@include prefixer(transform,skewY($degrees),webkit moz ms o spec);
+}
+
+//6.8.14 skewZ
+//eg.	@include skewZ(30deg);
+@mixin skewZ($degrees){
+	@include prefixer(transform,skewZ($degrees),webkit moz ms o spec);
+}
+
+//----------------------------------
+// 7 background 
+//----------------------------------
+
+//7.1 background origin
+//		padding-box | border-box | content-box
+//eg. @include background-origin;
+@mixin background-origin($origin:padding-box){
+	@include prefixer(background-origin,$origin,webkit spec);
+}
+
+//7.2 background clip
+// border-box | padding-box | content-box
+//eg. @include background-clip;
+@mixin background-clip($clip:border-box){
+	@include prefixer(background-clip,$clip,webkit spec);
+}
+
+//7.3 background size
+//eg. 	@include background-size(50px 30px,40px 30px);
+@mixin background-size($size...){
+	@include prefixer(background-size,$size,webkit spec);
+}
+
+//7.4 horizontal gradient
+// eg. left -> right @include gradient-horizontal(#333, #ccc);
+// eg. right -> left @include gradient-horizontal(#ccc, #333);
+// eg. multiple -> @include gradient-horizontal(#ccc 20%,#fff 20%,#fff 60%,#f36 60%);
+@mixin gradient-horizontal($gradient...){
+  background-image: -moz-linear-gradient(left, $gradient); // FF 3.6+
+  background-image: -webkit-linear-gradient(left, $gradient); // Safari 5.1+, Chrome 10+
+  background-image: -o-linear-gradient(left, $gradient); // Opera 11.10
+  background-image: linear-gradient(to right, $gradient); // Standard, IE10
+}
+
+//7.5 vertical gradient
+// eg. top -> bottom @include gradient-vertical(#333, #ccc);
+// eg. bottom -> top @include gradient-vertical(#ccc, #333);
+//eg. multiple -> @include gradient-vertical(#ccc 20%,#fff 20%,#fff 60%,#f36 60%);
+@mixin gradient-vertical($gradient...) {
+  background-image: -moz-linear-gradient(top, $gradient); // FF 3.6+
+  background-image: -webkit-linear-gradient(top, $gradient); // Safari 5.1+, Chrome 10+
+  background-image: -o-linear-gradient(top, $gradient); // Opera 11.10
+  background-image: linear-gradient(to bottom, $gradient); // Standard, IE10
+}
+
+//7.6 direction gradient 
+// eg. @include gradient-directional(45deg, #333 30%, #ccc);
+@mixin gradient-directional($gradient...) {
+  background-image: -moz-linear-gradient($gradient); // FF 3.6+
+  background-image: -webkit-linear-gradient($gradient); // Safari 5.1+, Chrome 10+
+  background-image: -o-linear-gradient($gradient); // Opera 11.10
+  background-image: linear-gradient($gradient); // Standard, IE1
+}
+
+//7.7 radial gradient
+//eg. @include gradient-radial(ellipse,hsla(120,70%,60%,.9),hsla(360,60%,60%,.9));
+@mixin gradient-radial($gradient...){
+  background-image: -moz-radial-gradient($gradient); // FF 3.6+
+  background-image: -webkit-radial-gradient($gradient); // Safari 5.1+, Chrome 10+
+  background-image: -o-radial-gradient($gradient); // Opera 11.10
+  background-image: radial-gradient($gradient); // Standard, IE1
+  background-repeat: no-repeat;
+}
+
