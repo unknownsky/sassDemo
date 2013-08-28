@@ -1,0 +1,522 @@
+@charset "UTF-8";
+
+//--------------------------------
+// Define Mixins List
+// 
+// 1. inline-block
+// 2. Horizontal center
+// 3. flat and reset float
+// 4. clearfix(clear float)
+// 5. Image replacement
+// 6. Hide Element
+// 7. text overflow
+// 8. opacity
+// 9. disabled
+// 10. min height
+// 11. content
+// 12. triangle	
+// 13. emCalc (px to em)
+// 14. remCalc (px to rem)
+//--------------------------------
+
+//--------------------------------
+//1. inline-block
+//--------------------------------
+
+// 设置`$inline-block-alignment` 为`none` 或者`false` 在inline-block的mixin中禁止输出'vertical-align'的属性值，或者设置一个值'alignment'来修改`vertical-align`默认值.
+$inline-block-alignment: middle !default;
+
+// 提供一个跨浏览器的方法来实现`display:inline-block`
+@mixin inline-block($alignment: $inline-block-alignment) {
+  display: inline-block;
+  @if $alignment and $alignment != none {
+    vertical-align: $alignment;
+  }
+  @if $legacy-support-for-ie {
+    *vertical-align: auto;
+    zoom: 1;
+    *display: inline;
+  }
+}
+
+
+//---------------------------------
+//2. Horizontal center
+//---------------------------------
+
+//给设置了`width`具体值的区块添加`margin-left`和`margin-right`值为`auto`，实现元素水平居中
+
+@mixin horizontal-center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+%horizontal-center{
+	@include horizontal-center;
+}
+
+//-------------------------------------
+//3. foat and reset float
+//-------------------------------------
+
+//1).设置`float`
+
+@mixin float($side: left){
+	float: unquote($side);
+	@if $legacy-support-for-ie{
+		_display: inline;
+	}
+}
+
+//2).设置左浮动
+@mixin pull-left{
+	@include float(left);
+}
+
+%pull-left{
+	@include float(left);
+}
+
+//3).设置右浮动
+
+@mixin pull-right{
+	@include float(right);
+}
+
+%pull-right {
+	@include float(right);
+}
+
+//4).重置浮动
+//通过`float: none`将元素的浮动重置回无，并且将元素设置为`display:block`，除非你修改`$display`的参数，将元素设置为其他的`display`属性
+
+@mixin reset-float($display:block){
+	float: none;
+	display: $display;
+}
+
+//---------------------------------------
+//4. Clearfix (clear float)
+//---------------------------------------
+
+//将典型的clearfix通过sass来实现
+
+@mixin clearfix {
+	@if $legacy-support-for-ie {
+		*zoom: 1;
+	}
+	&:before,
+	&:after {
+		content: "";
+		display: table;
+	}
+	&:after {
+		clear: both;
+		overflow: hidden;
+	}
+}
+
+%clearfix {
+	@include clearfix;
+}
+
+//-----------------------------------------
+// 5. Image replacement (图片替换文本)
+// 参考网址： https://github.com/h5bp/html5-boilerplate/blob/master/css/main.css
+//					http://www.w3cplus.com/css/ten-image-replace-text-with-css
+//-----------------------------------------
+
+@mixin ir {
+	background-color: transparent;
+	border: 0;
+	overflow: hidden;
+	@if $legacy-support-for-ie {
+		*text-indent: -150%;
+	}
+	
+	&:before {
+		content: "";
+		display: block;
+		width: 0;
+		height: 150%;
+	}
+}
+
+%ir {
+	@include ir;
+}
+
+//--------------------------------------------
+// 6. Hide Element (隐藏元素) 
+// 6.1:浏览器和屏幕阅读器都被隐藏 (hidden)
+// 6.2:仅浏览器隐藏 (visuallyhidden)
+// 6.3:隐藏元素，但占有空间（invisible）
+//--------------------------------------------
+
+//1.浏览器和屏幕阅读器都隐藏元素
+
+@mixin hidden {
+	display: none !important;
+	visibility: hidden;
+}
+
+%hidden {
+	@include hidden;
+}
+
+//2.仅浏览器隐藏，屏幕阅读器不被隐藏
+
+@mixin visuallyhidden {
+	@if $legacy-support-for-ie {
+		clip: rect(0,0,0,0);
+	}
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+	
+	//扩展了`.visuallyhidden`，充许`.focusable`元素通过键盘获取
+	&.focusable:active,
+	&.focusable:focus {
+		clip: auto;
+		height: auto;
+		margin: 0;
+		overflow: visible;
+		position: static;
+		width: auto;
+	}
+}
+
+%visuallyhidden {
+	@include visuallyhidden;
+}
+
+//3.隐藏元素，但布局中占有空间
+
+@mixin invisible {
+	visibility: hidden;
+}
+
+%invisible {
+	@include invisible;
+}
+
+//-------------------------------------
+// 7. text-overflow
+// 7.1 单行截取文本
+// 7.2 多行截取文本
+//--------------------------------------
+
+//1.单行文本截取
+
+@mixin singleline-ellipsis($substract:0){//`$substract`单位为%
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100% - $substract;
+}
+
+%singleline-ellipsis {
+	@include singleline-ellipsis;
+}
+
+//2. 多行文本截取https://gist.github.com/drewbarontini/3755170
+
+//----------------------------------------
+// 8. Opacity
+//----------------------------------------
+
+@mixin opacity($opacity:50) {
+  opacity: $opacity / 100;
+  @if $filter{
+    filter: alpha(opacity=$opacity);
+  }
+}
+
+//----------------------------------------
+// 9. disabled
+//----------------------------------------
+
+@mixin disabled($bgColor: #e6e6e6,$textColor:#ababab){
+	background-color: $bgColor !important;
+	color: $textColor !important;
+	cursor: not-allowed !important;
+}
+
+//----------------------------------------
+// 10. min height
+//----------------------------------------
+
+@mixin min-height($height){
+	min-height: $height;
+	height: auto !important;
+	@if $legacy-support-for-ie {
+		_height: $height;
+	}
+}
+
+//-----------------------------------------
+// 11. content
+//-----------------------------------------
+
+@mixin content{
+	content: "";
+	display: block;
+	width: 0;
+	height: 0;
+}
+
+%content {
+	@include content;
+}
+
+//----------------------------------------
+// 12. trangile
+//----------------------------------------
+
+//1. $size定义三角大小 默认参数值30px
+//2. $color定义三角颜色 默认参数值#000
+//3. $bgColor定义内嵌三角颜色 默认参数值#111
+//4. $direction定义三角方向 默认参数值up
+//5. $inner定义三角是否内嵌 默认参数值false，表示不内嵌
+//6. $transparent定义透明三角 默认参数值false，表示三角不透明
+@mixin triangle ($size:30px,$color:#000,$bgColor:#111,$direction:up,$inner:false,$transparent:false){
+   //使用border制作三角，有可能使用伪类生成，需要调用一个伪类所需样式
+	 @extend %content;
+   
+   position: absolute; //其父元素需要定义为position:realtive
+   
+   //判断三角形状
+   
+   //三角形为向上up、向右right、向下down和向左left四种
+              
+	 @if ($direction == up) or ($direction == right) or ($direction == down) or ($direction == left) {
+		 //设置边框
+		 border: ($size / 2) solid transparent;
+               
+     //三角朝上
+     @if $direction == up { 
+     		//三角内嵌 $inner=true
+		 		@if $inner {  
+        	border-color: $bgColor transparent transparent transparent; 
+          border-bottom-width: 0;
+          top: 0;
+        } @else { //三角为内嵌$inner=false
+          border-color:  transparent transparent $color transparent;  
+          border-top-width: 0;
+          bottom: 100%;
+        }
+        
+        //三角为透明 $transparent = true          
+        @if $transparent {
+        	border-color: transparent $color $color $color;
+          border-top-width: $size / 2;
+          border-bottom-width: 0;
+				} 
+			}
+               
+      //三角朝右
+      @else if $direction == right {
+      	@if $inner {  
+					border-color:  transparent $bgColor transparent transparent; 
+          border-left-width: 0;
+          right: 0;
+        } @else {
+					border-color:  transparent transparent transparent $color;  
+          border-right-width: 0;
+          left: 100%;
+        }
+        @if $transparent {
+           border-color:  $color transparent $color $color;
+           border-right-width: $size / 2;
+           border-left-width: 0;
+        }  
+      }
+                
+      //三角朝下
+      @else if $direction == down {
+         @if $inner {  
+            border-color:  transparent  transparent $bgColor transparent; 
+            border-top-width: 0;
+            bottom: 0;
+         } @else {
+            border-color: $color transparent transparent transparent;  
+            border-bottom-width: 0;
+            top: 100%;
+         }
+         @if $transparent {
+            border-color:  $color $color transparent $color;
+            border-bottom-width: $size / 2;
+            border-top-width: 0;
+         }  
+      }
+                
+      //三角朝右
+      @else if $direction == left {
+         @if $inner {  
+            border-color:  transparent transparent transparent $bgColor; 
+            border-right-width: 0;
+            left: 0;
+         } @else {
+            border-color:  transparent $color transparent transparent;  
+            border-left-width: 0;
+            right: 100%;
+         }
+				 @if $transparent {
+            border-color:  $color $color $color transparent;
+            border-left-width: $size / 2;
+            border-right-width: 0;
+         }  
+       }
+     }  
+              
+    //当三角为左上、右上直角三角形时		
+		@else if ($direction == up-right) or ($direction == up-left) {
+    	border-top: $size solid $color;//顶边边框样式
+			top: 100%;
+			//当三角为右上直角三角形时，设置左边边框为透明
+			@if $direction == up-right {
+      	border-left:  $size solid transparent;
+				left: 0;
+
+			//当三角为左上直角三角形时，设置右边边框为透明
+			} @else if $direction == up-left {
+      	border-right: $size solid transparent;
+				right:0;
+			}
+		}
+
+		//当三角为右下、左下直角三角形时
+		@else if ($direction == down-right) or ($direction == down-left) {
+    	border-bottom: $size solid $color;//底边边框样式
+			bottom: 100%;
+			//当三角为右下直角三角形时，设置左边边框为透明
+			@if $direction == down-right {
+      	border-left:  $size solid transparent;
+				left: 0;
+			//当三你为左下直角三角形时，设置右边边框为透明
+			} @else if $direction == down-left {
+      	border-right: $size solid transparent;
+				right: 0;
+			}
+		}
+}
+
+//------------------------------------------
+//13. emCalc 
+//将多个属性或多个属性值的px单位转换为em单位
+//https://gist.github.com/mrdanadams/2237465
+//------------------------------------------
+
+//13.1:$base是相对于其父元素的font-size，而不是相对于自身的font-size
+//13.2:可以接受多个属性，或者多个属性值
+//13.3:只接受数值
+//13.4:使用方法
+//		 @include emCalc(line-height, 30)
+//		 @include emCalc(line-height, 30, 16)
+//		 @include emCalc(width height, 125);
+//		 @include emCalc(padding, 0 25, 16);
+//		 @include emCalc(text-shadow, (#0d6e28 1 1) (#777 0 0 2), 16);
+//		 @include emCalc(box-shadow, (inset 0 0 0 1 #2a9022) (inset 0 0 3 #459966), 16);
+
+@mixin emCalc($props,$sizes,$base:$base-font-size){
+	$values: ();
+	$sublists: false;
+	
+	@each $s in $sizes {
+		//循环列表中多个属性值，例如text-shadow属性
+		@if type-of($s) == list {
+			$sublists: true;
+			$vv: ();
+			@each $ss in $s {
+				$vv: append($vv,if(type-of($ss) == number, #{$ss / $base}em, $ss));
+			}
+			$values: append($values,join((), $vv));
+		}
+		@else {
+			$values: append($values,if(type-of($s) == number, #{$s / $base}em, $s));
+		}
+	}
+	$value: join((), $values, if($sublists,comma,space));
+	@each $prop in $props {#{$prop}: $value}
+}
+
+//------------------------------------------
+// 14. remCalc() (px to rem)
+// http://css-tricks.com/snippets/css/less-mixin-for-rem-font-sizing/
+//------------------------------------------
+// 14.1 $property定义属性
+// 14.2 $values... 定义多个属性值
+// 14.3 remCalc(width,45)
+// 14.4 remCalc(margin,.1,.2,1)
+
+@mixin remCalc($property,$values...){
+	$pxValues: "";
+	$remValues: "";
+	$browser-default-font-size: strip-units($browser-default-font-size);
+	@each $value in $values {
+		$pxValues: #{$pxValues + " " + $value * $browser-default-font-size}px;//冒号之间要有空格
+		$remValues: #{$remValues + " " + $value}rem;//冒号之间要有空格
+	}
+	#{$property}: $pxValues;
+  #{$property}: $remValues;
+}     
+//------------------------------------------
+// Define Function list
+
+// 1. strip-units() 去除单位
+// 2. pxToem() px转em
+// 3. pxTorem() px转rem
+//-------------------------------------------
+
+
+//-------------------------------------------
+//1. strip-units() 去除单位
+//http://stackoverflow.com/questions/12328259/how-do-you-strip-the-unit-from-any-number-in-sass
+//-------------------------------------------
+
+//去掉一个值的单位，如12px => 12
+// eg. strip-units(12px) => 12
+
+@function strip-units($number){
+	@return $number / ($number * 0 + 1);
+}     
+
+//-------------------------------------------
+// 2. pxToem() px转em计算
+//https://github.com/thoughtbot/bourbon/blob/master/app/assets/stylesheets/functions/_px-to-em.scss
+//-------------------------------------------
+
+//将px转换成em
+//当元素的父元素没有重置字体大小时，相对于16px计算，如果你要将12px转换成em时，可以写成`pxToem(12px)`
+//当元素的父元素重置了字体大小时，如24px，如果你要将12px转换成em时,可以写成`pxToem(12px,24px)`
+//另外你还可以不显式的写也单位`px`
+
+@function pxToem($target-size,$context:$base-font-size) {
+	@if not unitless($target-size) { //unitless(12) => true, unitless(12px) => false
+		$target-size: strip-units($target-size);//去掉$target-size值单位
+	}
+	@if not unitless($context){
+		$context: strip-units($context);//去掉$context值单位
+	}
+	@return ($target-size / $context) * 1em;
+}
+
+
+//-------------------------------------------
+// 3. pxTorem() px转rem计算
+//-------------------------------------------
+
+//将px转换为rem
+//主要用于字体的px转rem
+//如果没有定义，基本的字号设置为像素
+//需要在根元素设置一个基本的font-size
+// pxTorem(12px)
+
+@function pxTorem($px){
+	@return $px / $browser-default-font-size * 1rem;
+}

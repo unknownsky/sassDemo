@@ -1,0 +1,232 @@
+@charset "UTF-8";
+
+//------------------------------
+// CSS3 scss mixins
+// http://bourbon.io/
+// https://github.com/thomas-mcdonald/bootstrap-sass/blob/master/vendor/assets/stylesheets/bootstrap/_mixins.scss
+//------------------------------
+
+
+//------------------------------
+// prefixer
+// eg. @include prefixer(border-radius,$radius,webkit spec)
+//------------------------------
+
+$prefix-for-webkit: true !default;
+$prefix-for-mozilla: true !default;
+$prefix-for-microsoft: true !default;
+$prefix-for-opera: true !default;
+$prefix-for-spec: true !default; //required for keyframe mixin
+
+@mixin prefixer($property,$value,$prefixes){
+	@each $prefix in $prefixes {
+		@if $prefix == webkit and $prefix-for-webkit == true {
+			-webkit-#{$property}: $value;
+		}
+		@else if $prefix == moz and $prefix-for-mozilla == true {
+			-moz-#{$property}: $value;
+		}
+		@else if $prefix == ms and $prefix-for-microsoft == true {
+			-ms-#{$property}: $value;
+		}
+		@else if $prefix == o and $prefix-for-opera == true {
+			-o-#{$property}: $value;
+		}
+		@else if $prefix == spec and $prefix-for-spec == true {
+			#{$property}: $value;
+		}
+		@else {
+			@warn "Unrecognized prefix: #{$prefix}";
+		}
+	}
+}
+
+//disable prefix
+@mixin disable-prefix-for-all(){
+	$prefix-for-webkit: false;
+	$prefix-for-mozilla: false;
+	$prefix-for-microsoft: false;
+	$prefix-for-opera: false;
+	$prefix-for-spec: false;
+}
+
+//Return vendor-prefixed property names if appropriate
+//eg. transitionPropertyNames((transform, color, background), moz) -> -moz-transform, color, background
+
+@function transitionPropertyName($property,$vendor:false){
+	//put other properties that need to be prefixed here aswell
+	@if $vendor and $property == transform {
+		@return unquote("-"+$vendor+"-"+$property);
+	}
+	@else {
+		@return $property;
+	}
+}
+
+@function transitionPropertyNames($properties,$vendor:false){
+	$new-properties:();
+	@each $property in $properties {
+		$new-properties: append($new-properties,transitionPropertyName($property,$vendor),comma);
+	}
+	@return $new-properties;
+}
+
+//---------------------------------
+// 1. border-radius
+// eg. @include border-radius(4px)->border-radius: 4px;
+// single corner border radius
+// eg. @include border-radius(1px 0 0 0)-> border-radius: 1px 0 0 0;
+//---------------------------------
+@mixin border-radius($radius:$baseRadius){
+	@include prefixer(border-radius,$radius,webkit spec);
+}
+
+//----------------------------------
+// 2. box sizing
+// $type: borer-box | padding-box | content-box
+// @include box-sizing()-> box-sizing:border-box
+//----------------------------------
+@mixin box-sizing($type: border-box){
+	@include prefixer(box-sizing,$type,webkit moz spec);
+}
+
+//-----------------------------------
+// 3. border image
+//    $path: image url
+//    $offsets:
+//    $repeats:stretch | repeat | round
+//    eg. @include border-image(url(button_sprite.png), 0 18 50 18, stretch)
+//------------------------------------
+@mixin border-image($path,$offsets,$repeats){
+	@include prefixer(border-image,$path $offsets $repeats,webkit moz o ms spec);
+}
+
+//-------------------------------------
+// 4. box shadow
+//    eg. @include box-shadow()
+//-------------------------------------
+@mixin box-shadow($shadow...){
+	@include prefixer(box-shadow,$shadow,webkit spec);
+}
+
+//-------------------------------------
+// 5. no have box shadow
+//-------------------------------------
+@mixin no-box-shadow($noboxshadow:none){
+	@include prefixer(box-shadow,$noboxshadow,webkit spec);
+}
+
+//--------------------------------------
+// 6. transform
+//--------------------------------------
+
+//6.1 transform origin
+// x-axis - left | center | right  | length | %
+// y-axis - top  | center | bottom | length | %
+// z-axis -                          length
+//eg. @include transform-origin(50% 50%); //2d
+//eg. @include transform-origin(left bottom -50px)
+@mixin transform-origin($axes: 50%){
+	@include prefixer(transform-origin,$axes,webkit moz ms o spec);
+}
+
+//6.2 transform style
+// flat | preserve-3d
+//eg. @include transform-style;
+@mixin transform-style($style:preserve-3d){
+	@include prefixer(transform-style,$style,webkit moz ms o spec);
+}
+
+//6.3 perspective
+// none | <length>
+//eg. @include perspective(300px);
+@mixin perspective($depth:none){
+	@include prefixer(perspective,$depth,webkit moz ms o spec);
+	@include transform-style;
+}
+
+//6.4 perspective origin
+// x-axis - left | center | right  | length | %
+// y-axis - top  | center | bottom | length | %
+//eg. @include perspective-origin;
+@mixin perspective-origin($axis: 50% 50%){
+	@include prefixer(perspective-origin,$axis,webkit moz ms o spec);
+}
+
+//6.5 backface visibility
+// visible | hidden
+//eg. @include backface-visibility(visible);
+@mixin backface-visibility($visibility:hidden){
+	@include prefixer(backface-visibility,$visibility,webkit moz ms o spec);
+}
+
+//6.6 transform
+//eg. @include transform(rotateY(90) translateZ(1em));
+@mixin transform($property...){
+	@include prefixer(transform,$property,webkit moz ms o spec);
+}
+
+//6.7 2D transform
+
+//6.7.1 rotate
+//eg. 	@include rotate(30deg);
+@mixin rotate($degrees){
+	@include prefixer(transform,rotate($degrees),webkit moz ms o spec);
+}
+
+//6.7.2 scale
+//eg. @include scale(1,.9);
+@mixin scale($ratio...){
+	@include prefixer(transform,scale($ratio...),webkit moz ms o spec);
+}
+
+
+//6.8 3D transform
+
+//6.8.1 rotateX
+//eg. 	@include rotateX(30deg);
+@mixin rotateX($degrees){
+	@include prefixer(transform,rotateX($degrees),webkit moz ms o spec);
+}
+
+//6.8.2 rotateY
+//eg. 	@include rotateY(30deg);
+@mixin rotateY($degrees){
+	@include prefixer(transform,rotateY($degrees),webkit moz ms o spec);
+}
+
+//6.8.3 rotateZ
+//eg. 	@include rotateZ(30deg);
+@mixin rotateZ($degrees){
+	@include prefixer(transform,rotateZ($degrees),webkit moz ms o spec);
+}
+
+//6.8.4 rotate3d
+//eg. 	@include rotate3d(1, 1, 1,10deg);
+@mixin rotate3d($degrees...){
+	@include prefixer(transform,rotate3d($degrees...),webkit moz ms o spec);
+}
+
+//6.8.5 scaleX
+//eg. @include scaleX(.3);
+@mixin scaleX($ratio){
+	@include prefixer(transform,scaleX($ratio),webkit moz ms o spec);
+}
+
+//6.8.6 scaleY
+//eg. @include scaleY(1.2);
+@mixin scaleY($ratio){
+	@include prefixer(transform,scaleY($ratio),webkit moz ms o spec);
+}
+
+//6.8.7 scaleZ
+//eg. @include scaleZ(1.1);
+@mixin scaleZ($ratio){
+	@include prefixer(transform,scaleZ($ratio),webkit moz ms o spec);
+}
+
+//6.8.7 scale3d
+//eg. @include scale3d(1,1,.6);
+@mixin scale3d($ratio...){
+	@include prefixer(transform,scale3d($ratio...),webkit moz ms o spec);
+}

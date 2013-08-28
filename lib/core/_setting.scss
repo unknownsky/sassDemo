@@ -1,0 +1,20 @@
+@charset "UTF-8";
+
+//--------------------
+// Settings define
+//--------------------
+
+//1. 开关设置
+
+$legacy-support-for-ie: true !default;//是否兼容IE低版本
+$filter: true !default;//是否开启滤镜
+
+
+
+//2. font-size
+$browser-default-font-size: 16px !default;
+$base-font-size: 16 !default;
+
+
+//3. css3
+$baseRadius: 3px !default;
