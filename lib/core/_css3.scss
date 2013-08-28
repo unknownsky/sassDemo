@@ -351,3 +351,40 @@ $prefix-for-spec: true !default; //required for keyframe mixin
   background-repeat: no-repeat;
 }
 
+//7.8 background stripes
+// thanks css trick:http://css-tricks.com/striped-background-gradients/
+//eg.
+
+@mixin background-image($undirection,$direction,$gradient){
+	background-image: -webkit-linear-gradient($undirection,$gradient);
+	background-image: -moz-linear-gradient($undirection,$gradient);
+	background-image: -o-linear-gradient($undirection,$gradient);
+	background-image: linear-gradient($direction,$gradient);
+}
+
+@mixin background-stripes($colors,$undirection:"top",$direction:"to bottom"){
+	$stripes: 100% / length($colors);
+	$auto: not(type-of(nth($colors,1)) == list);
+	$gradient: ();
+	
+	@for $i from 1 through length($colors) {
+		$item: nth($colors,$i);
+		$dump: ();
+		
+		@if $auto == true {
+			$dump: $item $stripes * ($i - 1), $item $stripes * $i;
+		}
+		@else {
+			@if $i > 1 {
+				$pre: nth($colors, $i - 1);
+				$dump: append($dump,nth($item,1) nth($pre,2));
+			}
+			$dump: append($dump, $item);
+		}
+		$gradient: join($gradient,$dump,comma);
+	}
+	@include background-image($undirection,$direction,$gradient);
+}
+//------------------------------------------
+// 8. transition
+//------------------------------------------
