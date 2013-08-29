@@ -17,6 +17,7 @@
 // 12. triangle	
 // 13. emCalc (px to em)
 // 14. remCalc (px to rem)
+// 15. semi-transparent colors
 //--------------------------------
 
 //--------------------------------
@@ -465,6 +466,24 @@ $inline-block-alignment: middle !default;
 	#{$property}: $pxValues;
   #{$property}: $remValues;
 }     
+
+//-------------------------------------------
+// 15. Semi-Ttransparent Colors
+// Thanks: http://www.thesassway.com/intermediate/mixins-for-semi-transparent-colors
+// support css attribute: color,background-color,border-color,outline-color
+//eg. @include semi-transparent-colors("background-color",rgba(black,.6),white);
+//-------------------------------------------
+@mixin semi-transparent-colors($attribute,$color,$background){
+	$percent: alpha($color) * 100%; //获取颜色透明度值，并转换成百分比
+  $opaque: opacify($color,1); //使颜色不透明
+  $solid-color: mix($opaque,$background,$percent);
+  @if ($percent < 100%) {
+    #{$attribute}: $solid-color; //设置不透明的颜色，为不支持rgba颜色的浏览器服务  
+  }
+  #{$attribute}: $color;//设置透明颜色，为支持rgba颜色的浏览器服务
+}
+
+
 //------------------------------------------
 // Define Function list
 
