@@ -1,0 +1,130 @@
+@charset "UTF-8";
+
+//include w3cplus sass lib for demo
+
+@import "../../lib/function.scss";
+
+//define variable
+
+$color: #fff !default;
+$bgcolor: #b799a3 !default;
+$font-family: arial !default;
+$unit: 30px !default;
+$placeholders: '-webkit-input-placeholder',
+               '-moz-placeholder',
+               '-ms-input-placeholder';
+
+@mixin placeholder {
+  @each $placeholder in $placeholders {
+    @if $placeholder == "-webkit-input-placeholder" {
+      &::#{$placeholder} {
+        @content;
+      }
+    }
+    @else if $placeholder == "-moz-placeholder" {
+      // FF 18-
+      &:#{$placeholder} {
+        @content;
+      }
+
+      // FF 19+
+      &::#{$placeholder} {
+        @content;
+      }
+    }
+    @else {
+      &:#{$placeholder} {
+        @content;
+      }
+    }
+  }
+}
+
+
+* {
+	margin: 0;
+	padding: 0;
+	@include box-sizing(border-box);
+}
+html,
+body {
+	height: 100%;
+}
+
+// gradient for body
+
+body {
+	@include gradient-vertical($bgcolor,#a39074);
+}
+
+// style form
+
+form {
+	width: $unit * 20 - $unit * 1.5;
+	padding: $unit $unit * 1.5;
+	margin-top: $unit * 2.5;
+	@include horizontal-center; //Horizontal center
+	@include gradient-vertical(#c6adb2,#b8a08b);
+	@include border-radius(3px);
+	@include box-shadow(inset 0 1px 1px rgba(white,.5), 0 1px 3px rgba(black,.25), 0 2px 5px -3px rgba(black,.15));
+}
+
+h2 {
+	color: $color;
+	font-size: 36px;
+	text-align: center;
+	text-transform: capitalize;
+	text-shadow: 0 1px 1px rgba(black,.25);
+	margin-bottom: $unit;
+}
+
+input[type="text"],
+input[type="password"]{
+	display: block;
+	width: 100%;
+	border: none 0;
+	padding: 15px 30px;
+	height: $unit * 2;
+	margin-bottom: $unit;
+	background-color: transparent;
+	color: $color;
+	font-size: 25px;
+	text-shadow: 0 1px 1px rgba(black,.25);
+	text-transform: capitalize;
+	@include border-radius(5px);
+	@include box-shadow(inset 0 1px 3px rgba(black,.15),0 1px 2px rgba(white,.5));
+	@include placeholder {
+    color: $color;
+    text-shadow: 0 1px 1px rgba(black,.25);
+    text-transform: capitalize;
+  }
+	&:focus,
+	&:hover {
+		@include box-shadow(inset 0 1px 1px rgba(white, 0.075), 0 0 8px rgba(white, 0.6));
+	}
+	&:focus{
+		outline: none 0;
+	}
+}	
+
+button {
+	display: block;
+	width: 100%;
+	border: 1px solid #443b37;
+	text-align: center;
+	height: $unit * 2.5;
+	color: $color;
+	text-transform: capitalize;
+	font-size: 36px;
+	font-weight: bold;
+	text-shadow: 0 1px 1px rgba(black,.25),0 1px 1px rgba(black,.15);
+	@include border-radius(4px);
+	@include gradient-vertical(#8db874,darken(#8db874,10%));
+	@include box-shadow(inset 0 2px 1px rgba(lighten(#8db874,10%),.85), 0 1px 2px rgba(black,.25));
+	&:hover{
+		@include gradient-vertical(lighten(#8db874,3%),lighten(darken(#8db874,10%),3%));
+	}
+	&:active{
+		@include gradient-vertical(darken(#8db874,3%),darken(darken(#8db874,10%),3%));
+	}
+}
